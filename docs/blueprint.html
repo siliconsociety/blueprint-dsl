@@ -1,0 +1,1281 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blueprint</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07101b;
+      --panel: #0d1724;
+      --panel-2: #101d2b;
+      --text: #e8f1fb;
+      --muted: #9eb4ca;
+      --faint: #6f879f;
+      --line: #2b4460;
+      --line-strong: #4d7194;
+      --accent: #8bd7ef;
+      --accent-2: #ffb56f;
+      --ok: #91d6a4;
+      --warn: #ffd08a;
+      --bad: #f2a7a0;
+      --token-number: #b89bff;
+      --token-string: #8fdea2;
+      --code-bg: #07101a;
+      --shadow: 0 22px 70px rgba(0, 0, 0, 0.35);
+      --mono: "Fira Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --sans: "IBM Plex Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    html[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f5f8fb;
+      --panel: #ffffff;
+      --panel-2: #eef4fa;
+      --text: #102033;
+      --muted: #4c6177;
+      --faint: #6f8193;
+      --line: #c8d8e8;
+      --line-strong: #8fb1ce;
+      --accent: #126d8c;
+      --accent-2: #9a560c;
+      --ok: #246f3d;
+      --warn: #8a5a00;
+      --bad: #9a342c;
+      --token-number: #6f4fc8;
+      --token-string: #217a3e;
+      --code-bg: #f8fbfe;
+      --shadow: 0 22px 60px rgba(26, 50, 79, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(139, 215, 239, 0.12), transparent 28rem),
+        radial-gradient(circle at 85% 8%, rgba(255, 181, 111, 0.12), transparent 24rem),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.2em;
+    }
+
+    .shell {
+      position: relative;
+      width: min(84rem, calc(100vw - 2rem));
+      margin: 0 auto;
+      padding: 2rem 0 4rem;
+    }
+
+    .topbar {
+      position: absolute;
+      top: 2rem;
+      right: 0;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-bottom: 0;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 15ch;
+      margin: 0;
+      font-family: var(--mono);
+      font-size: clamp(2.2rem, 6vw, 5.5rem);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 0.85rem;
+      font-family: var(--mono);
+      font-size: clamp(1.45rem, 3vw, 2.2rem);
+      line-height: 1.1;
+    }
+
+    h3 {
+      margin: 1.35rem 0 0.55rem;
+      font-family: var(--mono);
+      font-size: 1.02rem;
+      line-height: 1.25;
+    }
+
+    p {
+      margin: 0 0 0.9rem;
+      max-width: 72ch;
+      color: var(--muted);
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 2.35rem;
+      padding: 0 0.85rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--panel) 84%, transparent);
+      color: var(--text);
+      font: 700 0.78rem/1 var(--mono);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .theme-toggle:hover,
+    .theme-toggle:focus-visible {
+      border-color: var(--line-strong);
+      outline: none;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      align-items: end;
+      margin-bottom: 2rem;
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .hero-copy p {
+      margin-bottom: 0;
+      font-size: 1.02rem;
+    }
+
+    .hero-copy .hero-subheading {
+      margin-top: -0.55rem;
+      font-family: var(--mono);
+      font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+      letter-spacing: 0.06em;
+      line-height: 1.1;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .panel,
+    .sample-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--panel) 94%, transparent);
+      box-shadow: var(--shadow);
+    }
+
+    .sample-card {
+      /* Clips the code header's background to the rounded corners. */
+      overflow: hidden;
+    }
+
+    .rule-list,
+    .type-list {
+      margin: 0;
+      padding-left: 1.15rem;
+      color: var(--muted);
+    }
+
+    .rule-list li + li,
+    .type-list li + li {
+      margin-top: 0.45rem;
+    }
+
+    .rule-list strong,
+    .type-list strong {
+      color: var(--text);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 15rem minmax(0, 1fr);
+      gap: 1.2rem;
+      align-items: start;
+    }
+
+    .toc {
+      position: sticky;
+      top: 1rem;
+      display: grid;
+      gap: 0.35rem;
+      padding: 0.8rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--panel) 90%, transparent);
+    }
+
+    .toc a {
+      padding: 0.38rem 0.48rem;
+      border-radius: 6px;
+      color: var(--muted);
+      font: 700 0.74rem/1.25 var(--mono);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .toc a:hover,
+    .toc a:focus-visible {
+      background: var(--panel-2);
+      color: var(--text);
+      outline: none;
+    }
+
+    main {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .panel {
+      padding: 1.25rem;
+    }
+
+    .panel > :last-child {
+      margin-bottom: 0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    #example .code-pair {
+      grid-template-columns: 1fr;
+    }
+
+    .type-card {
+      padding: 0.95rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+    }
+
+    .type-card h3 {
+      margin: 0 0 0.45rem;
+      color: var(--accent);
+      font-size: 0.95rem;
+    }
+
+    .type-card p {
+      margin-bottom: 0.55rem;
+      font-size: 0.92rem;
+    }
+
+    .type-list code,
+    .rule-list code,
+    p code,
+    td code {
+      padding: 0.08rem 0.26rem;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--code-bg);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.92em;
+    }
+
+    .code-pair {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      gap: 1rem;
+    }
+
+    .code-block {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--code-bg);
+    }
+
+    .rule-list + .code-block,
+    p + .code-block {
+      margin-top: 1rem;
+    }
+
+    .code-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.6rem 0.7rem;
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--panel-2) 78%, transparent);
+      color: var(--faint);
+      font: 700 0.74rem/1 var(--mono);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .copy-btn {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font: 700 0.68rem/1 var(--mono);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      min-height: 1.7rem;
+      padding: 0 0.6rem;
+      cursor: pointer;
+    }
+
+    .copy-btn:hover,
+    .copy-btn:focus-visible {
+      border-color: var(--line-strong);
+      color: var(--text);
+      outline: none;
+    }
+
+    pre {
+      margin: 0;
+      overflow: auto;
+      padding: 0.85rem;
+      color: var(--text);
+      font: 0.82rem/1.5 var(--mono);
+      tab-size: 2;
+    }
+
+    .dsl-token-return {
+      color: var(--accent-2);
+    }
+
+    .dsl-token-builtin {
+      color: var(--accent);
+    }
+
+    .dsl-token-number {
+      color: var(--token-number);
+    }
+
+    .dsl-token-string {
+      color: var(--token-string);
+    }
+
+    .dsl-token-comment {
+      color: var(--faint);
+      font-style: italic;
+    }
+
+    .json-token-key {
+      color: #9876aa;
+    }
+
+    .json-token-string {
+      color: var(--token-string);
+    }
+
+    .json-token-number {
+      color: var(--token-number);
+    }
+
+    .json-token-literal {
+      color: #cc7832;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.94rem;
+    }
+
+    th,
+    td {
+      padding: 0.62rem 0.7rem;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--accent);
+      font: 700 0.76rem/1.2 var(--mono);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.55rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 1.65rem;
+      padding: 0 0.55rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font: 700 0.7rem/1 var(--mono);
+      letter-spacing: 0.04em;
+    }
+
+    .status-ok {
+      color: var(--ok);
+    }
+
+    .status-warn {
+      color: var(--warn);
+    }
+
+    .status-bad {
+      color: var(--bad);
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .layout,
+      .grid-2,
+      .code-pair {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        position: static;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100vw - 1rem, 84rem);
+        padding-top: 1rem;
+      }
+
+      .topbar {
+        position: static;
+        align-items: flex-start;
+        flex-direction: column;
+        margin-bottom: 1rem;
+      }
+
+      .panel {
+        padding: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle light mode">
+        <span data-theme-label>Dark</span>
+      </button>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Output Schema Shorthand</p>
+        <h1>Blueprint</h1>
+        <p class="hero-subheading">JSON Schema DSL</p>
+        <p>
+          Declare the exact JSON a model must return. Blueprint compiles to strict
+          JSON Schema, so you never hand-write <code>required</code>,
+          <code>additionalProperties</code>, or provider wrappers.
+        </p>
+      </div>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Page sections">
+        <a href="#basics">Basics</a>
+        <a href="#example">Example</a>
+        <a href="#writing">Writing</a>
+        <a href="#types">Types</a>
+        <a href="#reuse">Reuse &amp; Roots</a>
+        <a href="#guarantees">Guarantees</a>
+        <a href="#errors">Errors</a>
+        <a href="#samples">Samples</a>
+      </nav>
+
+      <main>
+        <section id="basics" class="panel">
+          <h2>The Basics</h2>
+          <p>
+            A blueprint describes one output shape: the fields a chat reply must
+            contain, their types, and what each field means. When a thread's output
+            mode is JSON, the model is forced to return exactly that shape — no extra
+            keys, no missing keys, no prose.
+          </p>
+          <p>
+            You write blueprints in the chat's <strong>Structured Output</strong> editor.
+            <strong>Preview</strong> shows the compiled JSON Schema,
+            <strong>Generate</strong> drafts a blueprint from a plain-English description
+            using the thread's model, and the <strong>?</strong> button opens a quick-start
+            card. The smallest useful blueprint is a single <code>Return</code> block:
+          </p>
+          <div class="code-block">
+            <div class="code-head">
+              <span>Minimal Blueprint</span>
+              <button class="copy-btn" type="button" data-copy>Copy</button>
+            </div>
+            <pre><code data-blueprint>Return Answer:
+  verdict: Boolean
+  reason: String(max=200)  # one short sentence explaining the verdict</code></pre>
+          </div>
+        </section>
+
+        <section id="example" class="panel">
+          <h2>Worked Example</h2>
+          <p>
+            One blueprint using most of the language: a reusable <code>Schema</code>,
+            a description comment, a nullable field, an inline nested object, an enum,
+            and a list. Below it is the exact schema the compiler produces.
+          </p>
+          <div class="code-pair">
+            <article class="code-block">
+              <div class="code-head">
+                <span>Blueprint</span>
+                <button class="copy-btn" type="button" data-copy>Copy</button>
+              </div>
+              <pre><code data-blueprint>Schema Friend:
+  name: String(min=1)
+  ranking: Float(min=0.0, max=1.0)  # closeness, 1.0 is closest
+
+Return Person:
+  name: String(min=1)
+  age: Optional[Integer]  # null when unknown
+  address:
+    street: String
+    city: String
+  status: Enum["active", "inactive"]
+  friends: List[Friend]</code></pre>
+            </article>
+
+            <article class="code-block">
+              <div class="code-head">
+                <span>Compiled Schema</span>
+                <button class="copy-btn" type="button" data-copy>Copy</button>
+              </div>
+              <pre><code data-json>{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "age": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "null when unknown"
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "street": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "street",
+        "city"
+      ],
+      "additionalProperties": false
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive"
+      ]
+    },
+    "friends": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Friend"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "age",
+    "address",
+    "status",
+    "friends"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "Friend": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ranking": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "closeness, 1.0 is closest"
+        }
+      },
+      "required": [
+        "name",
+        "ranking"
+      ],
+      "additionalProperties": false
+    }
+  }
+}</code></pre>
+            </article>
+          </div>
+        </section>
+
+        <section id="writing" class="panel">
+          <h2>Writing Blueprint</h2>
+
+          <h3>Declarations</h3>
+          <p>
+            Every blueprint has exactly one <code>Return</code>, which declares the reply
+            shape. <code>Schema</code> blocks are optional and declare reusable shapes you
+            reference by name.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>You Write</th>
+                <th>You Get</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Return Name:</code> with indented fields</td>
+                <td>The reply is an object with those fields.</td>
+              </tr>
+              <tr>
+                <td><code>Return Name</code> where <code>Name</code> is a declared <code>Schema</code></td>
+                <td>The reply is that schema. No duplicate copy ships in <code>$defs</code>.</td>
+              </tr>
+              <tr>
+                <td><code>Return List[Name]</code> or any type expression</td>
+                <td>The reply is that type — see <a href="#reuse">Reuse &amp; Roots</a> for how non-object roots travel.</td>
+              </tr>
+              <tr>
+                <td><code>Schema Name:</code> with indented fields</td>
+                <td>A reusable shape for fields, lists, and unions.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Fields and Indentation</h3>
+          <p>
+            Fields are <code>name: Type</code>, one per line, indented exactly two spaces
+            per nesting level. Field names use letters, digits, and underscores. Tabs,
+            odd indents, and duplicate field names are compile errors.
+          </p>
+
+          <h3>Comments Are Descriptions</h3>
+          <p>
+            A trailing <code># comment</code> on a field or declaration line compiles into
+            that node's <code>description</code> — <strong>the model reads it</strong>, so
+            this is where you say what a field means, its units, or when it should be null.
+            Full-line comments are ignored and never reach the model. A trailing
+            <code>#</code> with no text is a compile error.
+          </p>
+
+          <h3>Nesting Inline</h3>
+          <p>
+            A bare <code>name:</code> opens a nested object, and <code>name: List:</code>
+            (or <code>name: List(min=1):</code>) opens a list of objects. Children are
+            indented two more spaces. Inline blocks cannot be unioned or wrapped in
+            <code>Optional</code> — declare a named <code>Schema</code> when you need that.
+          </p>
+          <div class="code-block">
+            <div class="code-head">
+              <span>Inline Nesting</span>
+              <button class="copy-btn" type="button" data-copy>Copy</button>
+            </div>
+            <pre><code data-blueprint>Return Order:
+  id: Uuid
+  customer:  # buyer details
+    name: String(min=1)
+    email: Email
+  items: List(min=1):
+    sku: String
+    qty: Integer(min=1)</code></pre>
+          </div>
+
+          <h3>Nullable Fields</h3>
+          <p>
+            <code>Optional[Integer]</code> and <code>Integer | None</code> mean the same
+            thing: the key is <strong>always present</strong>, and its value may be
+            <code>null</code>. Strict schemas have no way to say "this key may be missing" —
+            every declared field appears in every reply.
+          </p>
+        </section>
+
+        <section id="types" class="panel">
+          <h2>Types</h2>
+          <div class="grid-2">
+            <article class="type-card">
+              <h3>Primitives</h3>
+              <ul class="type-list">
+                <li><code>String</code> — text.</li>
+                <li><code>Integer</code> — whole number.</li>
+                <li><code>Float</code> — decimal number.</li>
+                <li><code>Boolean</code> — true or false.</li>
+                <li><code>None</code> — null; used in unions like <code>Integer | None</code>.</li>
+              </ul>
+            </article>
+
+            <article class="type-card">
+              <h3>Containers</h3>
+              <ul class="type-list">
+                <li><code>List[T]</code> — an array of any type, including schemas.</li>
+                <li><code>Enum[...]</code> — a fixed set of literals, all one type: <code>Enum["draft", "final"]</code>, <code>Enum[1, 2, 3]</code>, or <code>Enum[True, False]</code>.</li>
+                <li><code>Optional[T]</code> — shorthand for <code>T | None</code>.</li>
+                <li><code>A | B</code> — the value is one of the listed types. Empty or duplicate branches are errors.</li>
+                <li>A declared <code>Schema</code> name used as a type, like <code>friends: List[Friend]</code>, becomes a <code>$ref</code>.</li>
+              </ul>
+            </article>
+          </div>
+
+          <h3>Formatted Strings</h3>
+          <p>
+            These compile to <code>type: "string"</code> plus a JSON Schema
+            <code>format</code>, which is also a strong hint to the model.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Format</th>
+                <th>Example Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Date</code></td>
+                <td><code>date</code></td>
+                <td><code>2026-07-02</code></td>
+              </tr>
+              <tr>
+                <td><code>Time</code></td>
+                <td><code>time</code></td>
+                <td><code>09:30:00</code></td>
+              </tr>
+              <tr>
+                <td><code>Datetime</code></td>
+                <td><code>date-time</code></td>
+                <td><code>2026-07-02T09:30:00Z</code></td>
+              </tr>
+              <tr>
+                <td><code>Duration</code></td>
+                <td><code>duration</code></td>
+                <td><code>PT1H30M</code></td>
+              </tr>
+              <tr>
+                <td><code>Email</code></td>
+                <td><code>email</code></td>
+                <td><code>ada@example.com</code></td>
+              </tr>
+              <tr>
+                <td><code>Hostname</code></td>
+                <td><code>hostname</code></td>
+                <td><code>api.example.com</code></td>
+              </tr>
+              <tr>
+                <td><code>IPv4</code></td>
+                <td><code>ipv4</code></td>
+                <td><code>192.168.0.1</code></td>
+              </tr>
+              <tr>
+                <td><code>IPv6</code></td>
+                <td><code>ipv6</code></td>
+                <td><code>2001:db8::1</code></td>
+              </tr>
+              <tr>
+                <td><code>Uuid</code></td>
+                <td><code>uuid</code></td>
+                <td><code>0f8fad5b-d9cb-469f-a165-70867728950e</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Constraints</h3>
+          <p>
+            Constraints are optional <code>key=value</code> arguments on a type.
+            <code>min</code> and <code>max</code> adapt to context: character length on
+            strings, numeric value on numbers, item count on lists.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Blueprint</th>
+                <th>Compiles To</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>String(min=1, max=80)</code></td>
+                <td><code>minLength</code>, <code>maxLength</code></td>
+              </tr>
+              <tr>
+                <td><code>Integer(min=0, max=10)</code></td>
+                <td><code>minimum</code>, <code>maximum</code></td>
+              </tr>
+              <tr>
+                <td><code>Float(exclusive_min=0.0, exclusive_max=1.0)</code></td>
+                <td><code>exclusiveMinimum</code>, <code>exclusiveMaximum</code></td>
+              </tr>
+              <tr>
+                <td><code>Integer(multiple_of=5)</code></td>
+                <td><code>multipleOf</code></td>
+              </tr>
+              <tr>
+                <td><code>List[String](min=1, max=10)</code></td>
+                <td><code>minItems</code>, <code>maxItems</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            There is no regex. When a format type doesn't fit, constrain the length and
+            explain the expected shape in a trailing <code>#</code> description.
+          </p>
+        </section>
+
+        <section id="reuse" class="panel">
+          <h2>Reuse &amp; Roots</h2>
+          <p>
+            Using a <code>Schema</code> name as a type compiles to a <code>$ref</code>
+            into <code>$defs</code>, so the shape is defined once no matter how many
+            fields use it. Schemas may reference each other and themselves — recursive
+            shapes like trees work. Only schemas actually reachable from the
+            <code>Return</code> ship in <code>$defs</code>; anything unused is pruned.
+          </p>
+          <h3>Non-Object Roots</h3>
+          <p>
+            <code>Return List[Person]</code> declares that the whole reply is an array.
+            Providers require the schema root to be an object, so the runtime transports
+            non-object roots inside a single-key wrapper object and unwraps the reply
+            before you see it. You always get the shape you declared; the wrapper is
+            invisible.
+          </p>
+          <div class="code-block">
+            <div class="code-head">
+              <span>Root Array</span>
+              <button class="copy-btn" type="button" data-copy>Copy</button>
+            </div>
+            <pre><code data-blueprint>Schema Person:
+  name: String
+
+Return List[Person]</code></pre>
+          </div>
+        </section>
+
+        <section id="guarantees" class="panel">
+          <h2>What the Compiler Guarantees</h2>
+          <ul class="rule-list">
+            <li><strong>Every field is required.</strong> The model cannot omit keys; use <code>Optional[T]</code> for values that may be null.</li>
+            <li><strong>Objects are closed.</strong> Every compiled object gets <code>additionalProperties: false</code> — no surprise keys.</li>
+            <li><strong>Errors aggregate.</strong> One compile pass reports every error it finds, each prefixed with its line number.</li>
+            <li><strong>Syntax is strict.</strong> Two-space indentation, no tabs, no trailing commas, no empty or duplicate union branches. Common slips get hints, like <code>str</code> → "Did you mean <code>String</code>?".</li>
+            <li><strong>Provider limits are checked locally.</strong> At most 5,000 properties, 10 nesting levels, 1,000 enum values, and 120,000 schema characters — mirroring OpenAI strict mode, so a blueprint that compiles here is accepted there.</li>
+            <li><strong>The provider wrapper is internal.</strong> The runtime adds <code>strict</code>, the response name, and the format envelope. Blueprints never contain provider boilerplate.</li>
+          </ul>
+          <div class="code-block">
+            <div class="code-head">
+              <span>Provider Wrapper, Added by the Runtime</span>
+              <button class="copy-btn" type="button" data-copy>Copy</button>
+            </div>
+            <pre><code data-json>{
+  "type": "json_schema",
+  "name": "person",
+  "strict": true,
+  "schema": {
+    "...": "compiled schema"
+  }
+}</code></pre>
+          </div>
+        </section>
+
+        <section id="errors" class="panel">
+          <h2>Errors</h2>
+          <p>
+            The compiler reports every error in one pass, each with a line number, so a
+            broken blueprint is usually fixable in a single edit. The common families:
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Error</th>
+                <th>What Happened</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Unknown type</td>
+                <td>The type isn't built in and isn't a declared <code>Schema</code>. Python names get a hint.</td>
+                <td><code>phone: str</code></td>
+              </tr>
+              <tr>
+                <td>Missing or extra Return</td>
+                <td>A blueprint needs exactly one <code>Return</code>.</td>
+                <td>Two <code>Return</code> blocks</td>
+              </tr>
+              <tr>
+                <td>Unsatisfiable constraint</td>
+                <td>The bounds can never both hold.</td>
+                <td><code>String(min=5, max=2)</code></td>
+              </tr>
+              <tr>
+                <td>Unsupported argument</td>
+                <td>That type doesn't take that argument.</td>
+                <td><code>Boolean(min=1)</code></td>
+              </tr>
+              <tr>
+                <td>Bad indentation</td>
+                <td>A line isn't indented in two-space steps, or doesn't match its block level.</td>
+                <td>A field indented three spaces</td>
+              </tr>
+              <tr>
+                <td>Sloppy syntax</td>
+                <td>Empty or duplicate union branches, extra commas, or a space before <code>[</code>.</td>
+                <td><code>String | String</code></td>
+              </tr>
+              <tr>
+                <td>Empty trailing comment</td>
+                <td>A trailing <code>#</code> with no text — write the description or remove it.</td>
+                <td><code>name: String  #</code></td>
+              </tr>
+              <tr>
+                <td>Invalid inline block</td>
+                <td>Only a bare field name or <code>List(...)</code> may open an indented block.</td>
+                <td><code>address: Optional:</code></td>
+              </tr>
+              <tr>
+                <td>Provider limit</td>
+                <td>The compiled schema exceeds a strict-mode size limit.</td>
+                <td>Over 5,000 properties</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="samples" class="panel">
+          <h2>Samples</h2>
+          <div class="grid-2">
+            <article class="sample-card">
+              <div class="code-head">
+                <span>Classification</span>
+                <button class="copy-btn" type="button" data-copy>Copy</button>
+              </div>
+              <pre><code data-blueprint>Return ModerationSummary:
+  flagged: Boolean
+  severity: Enum["none", "low", "medium", "high"]
+  confidence: Enum[1, 2, 3, 4, 5]  # 5 is most confident
+  rationale: String(max=500)</code></pre>
+            </article>
+
+            <article class="sample-card">
+              <div class="code-head">
+                <span>Extraction</span>
+                <button class="copy-btn" type="button" data-copy>Copy</button>
+              </div>
+              <pre><code data-blueprint>Schema Task:
+  title: String(min=1, max=120)
+  due_date: Date | None
+  priority: Enum["low", "normal", "high"]
+
+Return TaskList:
+  tasks: List[Task](min=0, max=20)</code></pre>
+            </article>
+
+            <article class="sample-card">
+              <div class="code-head">
+                <span>Nullable Values</span>
+                <button class="copy-btn" type="button" data-copy>Copy</button>
+              </div>
+              <pre><code data-blueprint>Return Contact:
+  name: String
+  email: Optional[Email]
+  last_seen_at: Optional[Datetime]  # null if never seen</code></pre>
+            </article>
+
+            <article class="sample-card">
+              <div class="code-head">
+                <span>Network Record</span>
+                <button class="copy-btn" type="button" data-copy>Copy</button>
+              </div>
+              <pre><code data-blueprint>Return HostCheck:
+  host: Hostname
+  address: IPv4 | IPv6
+  reachable: Boolean
+  checked_at: Datetime</code></pre>
+            </article>
+
+            <article class="sample-card">
+              <div class="code-head">
+                <span>Inline Nesting</span>
+                <button class="copy-btn" type="button" data-copy>Copy</button>
+              </div>
+              <pre><code data-blueprint>Return Receipt:
+  store: String
+  total: Float(min=0.0)
+  lines: List(min=1):
+    item: String
+    price: Float(min=0.0)</code></pre>
+            </article>
+
+            <article class="sample-card">
+              <div class="code-head">
+                <span>Root Array</span>
+                <button class="copy-btn" type="button" data-copy>Copy</button>
+              </div>
+              <pre><code data-blueprint>Schema Person:
+  name: String
+
+Return List[Person]</code></pre>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const button = document.querySelector("[data-theme-toggle]");
+      const label = document.querySelector("[data-theme-label]");
+      const savedTheme = localStorage.getItem("blueprint-spec-theme");
+
+      function setTheme(theme) {
+        const nextTheme = theme === "light" ? "light" : "dark";
+        root.dataset.theme = nextTheme;
+        localStorage.setItem("blueprint-spec-theme", nextTheme);
+        if (label) {
+          label.textContent = nextTheme === "light" ? "Light" : "Dark";
+        }
+        if (button) {
+          button.setAttribute(
+            "aria-label",
+            nextTheme === "light" ? "Switch to dark mode" : "Switch to light mode"
+          );
+        }
+      }
+
+      setTheme(savedTheme || "dark");
+
+      if (button) {
+        button.addEventListener("click", () => {
+          setTheme(root.dataset.theme === "light" ? "dark" : "light");
+        });
+      }
+
+      const blueprintBuiltins = new Set([
+        "Boolean",
+        "Date",
+        "Datetime",
+        "Duration",
+        "Email",
+        "Enum",
+        "Float",
+        "Hostname",
+        "IPv4",
+        "IPv6",
+        "Integer",
+        "List",
+        "None",
+        "Optional",
+        "Schema",
+        "String",
+        "Time",
+        "Uuid",
+      ]);
+      const blueprintTokenPattern =
+        /"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*'|-?(?:\d+\.\d+|\d+|\.\d+)(?:[eE][+-]?\d+)?|\b[A-Za-z][A-Za-z0-9_]*\b/g;
+      const jsonTokenPattern =
+        /"(?:\\.|[^"\\])*"(?=\s*:)|"(?:\\.|[^"\\])*"|-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?|\b(?:true|false|null)\b/g;
+      const numberPattern =
+        /^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$/;
+      const literalPattern = /^(?:true|false|null)$/;
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      function findCommentStart(line) {
+        let quote = null;
+        let escaped = false;
+        for (let index = 0; index < line.length; index += 1) {
+          const character = line[index];
+          if (escaped) {
+            escaped = false;
+            continue;
+          }
+          if (character === "\\") {
+            escaped = true;
+            continue;
+          }
+          if (quote) {
+            if (character === quote) {
+              quote = null;
+            }
+            continue;
+          }
+          if (character === '"' || character === "'") {
+            quote = character;
+            continue;
+          }
+          if (character === "#") {
+            return index;
+          }
+        }
+        return -1;
+      }
+
+      function highlightBlueprintCode(code) {
+        let html = "";
+        let cursor = 0;
+        for (const match of code.matchAll(blueprintTokenPattern)) {
+          const token = match[0];
+          const index = match.index ?? 0;
+          html += escapeHtml(code.slice(cursor, index));
+          if (token === "Return" || token === "Schema") {
+            html += `<span class="dsl-token-return">${escapeHtml(token)}</span>`;
+          } else if (token.startsWith('"') || token.startsWith("'")) {
+            html += `<span class="dsl-token-string">${escapeHtml(token)}</span>`;
+          } else if (/^-?(?:\d+\.\d+|\d+|\.\d+)(?:[eE][+-]?\d+)?$/.test(token)) {
+            html += `<span class="dsl-token-number">${escapeHtml(token)}</span>`;
+          } else if (blueprintBuiltins.has(token)) {
+            html += `<span class="dsl-token-builtin">${escapeHtml(token)}</span>`;
+          } else {
+            html += escapeHtml(token);
+          }
+          cursor = index + token.length;
+        }
+        html += escapeHtml(code.slice(cursor));
+        return html;
+      }
+
+      function highlightBlueprint(source) {
+        const value = String(source ?? "").replace(/\r\n?/g, "\n");
+        return value
+          .split("\n")
+          .map((line) => {
+            const commentIndex = findCommentStart(line);
+            if (commentIndex === -1) {
+              return highlightBlueprintCode(line);
+            }
+            const code = line.slice(0, commentIndex);
+            const comment = line.slice(commentIndex);
+            return (
+              highlightBlueprintCode(code) +
+              `<span class="dsl-token-comment">${escapeHtml(comment)}</span>`
+            );
+          })
+          .join("\n");
+      }
+
+      function highlightJson(source) {
+        const value = String(source ?? "").replace(/\r\n?/g, "\n");
+        let html = "";
+        let cursor = 0;
+        for (const match of value.matchAll(jsonTokenPattern)) {
+          const token = match[0];
+          const index = match.index ?? 0;
+          const isKey = token.startsWith('"') &&
+            /^\s*:/.test(value.slice(index + token.length));
+          html += escapeHtml(value.slice(cursor, index));
+          if (isKey) {
+            html += `<span class="json-token-key">${escapeHtml(token)}</span>`;
+          } else if (token.startsWith('"')) {
+            html += `<span class="json-token-string">${escapeHtml(token)}</span>`;
+          } else if (numberPattern.test(token)) {
+            html += `<span class="json-token-number">${escapeHtml(token)}</span>`;
+          } else if (literalPattern.test(token)) {
+            html += `<span class="json-token-literal">${escapeHtml(token)}</span>`;
+          } else {
+            html += escapeHtml(token);
+          }
+          cursor = index + token.length;
+        }
+        html += escapeHtml(value.slice(cursor));
+        return html;
+      }
+
+      document.querySelectorAll("code[data-blueprint]").forEach((code) => {
+        code.innerHTML = highlightBlueprint(code.textContent || "");
+      });
+
+      document.querySelectorAll("code[data-json]").forEach((code) => {
+        code.innerHTML = highlightJson(code.textContent || "");
+      });
+
+      document.querySelectorAll("[data-copy]").forEach((copyButton) => {
+        copyButton.addEventListener("click", async () => {
+          const block = copyButton.closest(".code-block, .sample-card");
+          const code = block ? block.querySelector("pre code") : null;
+          if (!code) {
+            return;
+          }
+          try {
+            await navigator.clipboard.writeText(code.textContent || "");
+            const originalText = copyButton.textContent;
+            copyButton.textContent = "Copied";
+            window.setTimeout(() => {
+              copyButton.textContent = originalText;
+            }, 1200);
+          } catch (_error) {
+            copyButton.textContent = "Failed";
+            window.setTimeout(() => {
+              copyButton.textContent = "Copy";
+            }, 1200);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+[project]
+name = "blueprint-dsl"
+version = "0.1.0"
+description = "A narrow DSL that compiles structured-output contracts to strict JSON Schema."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Robert Sharp", email = "webmaster@sharpdesigndigital.com" },
+]
+requires-python = ">=3.12"
+keywords = ["ai", "dsl", "json-schema", "structured-output"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/siliconsociety/blueprint-dsl"
+Repository = "https://github.com/siliconsociety/blueprint-dsl"
+Issues = "https://github.com/siliconsociety/blueprint-dsl/issues"
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.411",
+    "pytest>=9.1",
+    "pytest-cov>=7.0",
+    "ruff>=0.14",
+    "twine>=6.2",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.11,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+
+[tool.pyright]
+include = ["src/blueprint_dsl", "tests"]
+extraPaths = ["src"]
+pythonVersion = "3.12"
+typeCheckingMode = "standard"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+source = ["src/blueprint_dsl"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 88

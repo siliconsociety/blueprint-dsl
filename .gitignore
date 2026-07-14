@@ -1,0 +1,10 @@
+.coverage
+.idea/
+.pytest_cache/
+.python-version
+.ruff_cache/
+.venv*/
+__pycache__/
+coverage.json
+dist/
+*.egg-info/
