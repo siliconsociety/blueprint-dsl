@@ -1,7 +1,7 @@
 [project]
 name = "blueprint-dsl"
-version = "0.1.0"
-description = "A narrow DSL that compiles structured-output contracts to strict JSON Schema."
+version = "0.2.0"
+description = "A narrow DSL for strict structured-output contracts and readable JSON result views."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]

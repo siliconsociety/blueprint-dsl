@@ -1,4 +1,4 @@
-"""Compile Blueprint structured-output contracts to strict JSON Schema."""
+"""Compile Blueprint contracts and render their decoded JSON results."""
 
 from importlib.metadata import version
 

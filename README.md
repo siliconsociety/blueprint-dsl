@@ -1,8 +1,8 @@
 # Blueprint DSL
 
-Blueprint is a small language for declaring the exact JSON object an AI model must return.
-It compiles to strict JSON Schema and fails with line-oriented diagnostics when a contract is
-invalid or exceeds common structured-output provider limits.
+Blueprint is a small language for declaring the exact JSON object an AI model must return. It
+compiles to strict JSON Schema, renders decoded results as readable Blueprint views, and fails with
+line-oriented diagnostics when a contract is invalid or exceeds common provider limits.
 
 ```text
 Schema Friend:
@@ -28,6 +28,21 @@ print(compiled.name)
 print(compiled.schema)
 ```
 
+Decoded JSON results can be rendered in the same visual language without tying an application to
+a UI framework:
+
+```python
+from blueprint_dsl.render import render_blueprint_output
+
+view = render_blueprint_output(result, name="Person")
+print(view.text)
+print(view.json_text)
+```
+
+The Blueprint view is presentation-only; JSON remains the canonical machine representation.
+Semantic tokens let terminals, editors, and server-rendered interfaces apply their own syntax
+styling. See [Rendering Blueprint output](docs/output-rendering.md).
+
 ## Language
 
 A Blueprint contains exactly one `Return Name:` declaration and may contain reusable
@@ -50,12 +65,9 @@ canonical type registry for UI tooling.
 
 ## Stability
 
-Blueprint is intentionally narrow and feature complete. Version `0.1.0` establishes the
-public package API and `blueprint/1` language semantics. Future releases are expected to be
-bug fixes unless an actual language defect requires a documented change.
-
-An additive catalog of reusable, versioned output contracts is being considered for a future
-release. See [Standard output schemas](docs/standard-output-schemas.md) for the working design.
+Blueprint is intentionally narrow and feature complete. Version `0.1.0` established the public
+compiler API and `blueprint/1` language semantics. Version `0.2.0` adds framework-neutral output
+rendering without changing that language or its compiled JSON Schema.
 
 ## Development
 
