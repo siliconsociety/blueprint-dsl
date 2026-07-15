@@ -54,6 +54,9 @@ Blueprint is intentionally narrow and feature complete. Version `0.1.0` establis
 public package API and `blueprint/1` language semantics. Future releases are expected to be
 bug fixes unless an actual language defect requires a documented change.
 
+An additive catalog of reusable, versioned output contracts is being considered for a future
+release. See [Standard output schemas](docs/standard-output-schemas.md) for the working design.
+
 ## Development
 
 Blueprint supports Python 3.12 through 3.14 and has no runtime dependencies.
